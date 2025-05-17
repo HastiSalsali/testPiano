@@ -21,7 +21,7 @@
 #define rec4 A4
 #define rec5 A3
 #define rec6 A2
-const int NUMINPUT = 100, SENSITIVITY = 10,  NUM_OF_PINS = 3;
+const int NUMINPUT = 100, SENSITIVITY = 50,  NUM_OF_PINS = 3;
 long ZERO [NUM_OF_PINS] = {0};
 int BULB_PIN [6] = {bulb1, bulb2, bulb3, bulb4, bulb5, bulb6}, 
 REC_PIN [6]= {rec1, rec2, rec3, rec4, rec5, rec6};
@@ -49,17 +49,30 @@ void setup() {
 }
 
 void loop() {
-  int noteIn;
+  int noteIn[NUM_OF_PINS] = {0}, max = 0, maxBulb = 0;
   String sss = "";
-  for (int i = 0;   i < NUM_OF_PINS; i++) {
-    noteIn = analogRead(REC_PIN[i]);  
-    constrain (noteIn, ZERO[i] , 1023);
-    sss = sss + String(noteIn) + " ";
-    noteIn > (SENSITIVITY + ZERO[i])? digitalWrite (BULB_PIN[i], HIGH): digitalWrite (BULB_PIN[i], LOW);
-  }
-  Serial.println (sss);
-  
+  bool bulbOn [NUM_OF_PINS] = {0};
  
+  for (int i = 0;   i < NUM_OF_PINS; i++) {
+    noteIn[i] = analogRead(REC_PIN[i]);  
+    //constrain(noteIn, ZERO[i] , 1023);
+    noteIn[i] -= ZERO[i];
+    noteIn[i] > SENSITIVITY? digitalWrite (BULB_PIN[i], HIGH): digitalWrite (BULB_PIN[i], LOW);
+    //digitalWrite (BULB_PIN[i], LOW);
+    if (max < noteIn[i]) {
+      max = noteIn;
+      bulbOn [maxBulb] = 0;
+      bulbOn [i] = 0;
+      maxBulb = i;
+      
+      };
+    
+    sss = sss + String(noteIn[i]) + " ";
+  }
+
+  //noteIn[maxBulb] > SENSITIVITY? digitalWrite (BULB_PIN[maxBulb], HIGH): digitalWrite (BULB_PIN[maxBulb], LOW);
+ 
+  Serial.println (sss);
 
   delay(100);
 }
