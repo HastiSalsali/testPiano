@@ -21,16 +21,18 @@
 #define rec4 A4
 #define rec5 A3
 #define rec6 A2
-const int NUMINPUT = 100, SENSITIVITY = 10,  NUM_OF_PINS = 6;
+const int NUMINPUT = 100, SENSITIVITY = 10,  NUM_OF_PINS = 3;
 long ZERO [NUM_OF_PINS] = {0};
-int BULB_PIN [NUM_OF_PINS] = {bulb1, bulb2, bulb3, bulb4, bulb5, bulb6}, 
-REC_PIN [NUM_OF_PINS]= {rec1, rec2, rec3, rec4, rec5, rec6};
+int BULB_PIN [6] = {bulb1, bulb2, bulb3, bulb4, bulb5, bulb6}, 
+REC_PIN [6]= {rec1, rec2, rec3, rec4, rec5, rec6};
 
 
 void setup() {
-  pinMode (rec1, INPUT);
-  pinMode(bulb1, OUTPUT);
-  pinMode (BULB_PIN, OUTPUT);
+  for (int i = 0; i < NUM_OF_PINS; i++){
+    pinMode (REC_PIN [i], INPUT);
+    pinMode(BULB_PIN [i], OUTPUT);
+  }
+  
   Serial.begin(9600);
   delay (500);
   for (int i = 0;   i < NUM_OF_PINS; i++) {
@@ -48,20 +50,14 @@ void setup() {
 
 void loop() {
   int noteIn;
-  
+  String sss = "";
   for (int i = 0;   i < NUM_OF_PINS; i++) {
-    noteIn = analogRead(REC_PIN[i]);
-    Serial.println (noteIn); //PRINT
-    noteIn > (SENSITIVITY + ZERO[i])? digitalWrite (BULB_PIN, HIGH): digitalWrite (bulb1, LOW);
+    noteIn = analogRead(REC_PIN[i]);  
+    constrain (noteIn, ZERO[i] , 1023);
+    sss = sss + String(noteIn) + " ";
+    noteIn > (SENSITIVITY + ZERO[i])? digitalWrite (BULB_PIN[i], HIGH): digitalWrite (BULB_PIN[i], LOW);
   }
-  noteIn = analogRead(REC_PIN[1]);
-    Serial.println (noteIn); //PRINT
-    noteIn > (SENSITIVITY + ZERO[1])? digitalWrite (BULB_PIN, HIGH): digitalWrite (bulb1, LOW);
-    
-  digitalWrite (4, HIGH);
-  //constrain (noteIn, 0, 1023);
-  
-
+  Serial.println (sss);
   
  
 
